@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.wmrshooter.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\Pog\\Documents\\Work\\Games and Graphics\\ShooterWMR\\WMRShooter\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\Pog\\Documents\\Work\\Games and Graphics\\ShooterWMR\\ElectrocutionVRExperience\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "WMRShooter [Testing]"

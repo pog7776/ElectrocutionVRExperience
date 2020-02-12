@@ -109,7 +109,7 @@ namespace VRShooterKit.DamageSystem
             }
         }
 
-        private void ModifyHP(float v)
+        public void ModifyHP(float v)
         {
             hp += v;
 

@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class HitBoxController : MonoBehaviour{
 
+    #region Singleton
+    private static HitBoxController _instance;
+	public static HitBoxController Instance { get { return _instance; } }
+    #endregion
+
     #region Anim Names
     [Header("Anim Names")]
     // The names of the animations to play for each function
@@ -19,7 +24,12 @@ public class HitBoxController : MonoBehaviour{
     #region Shock
     [Header("Shock")]
     [SerializeField]
+    float timeBetweenShocks = 20;
+
+    [SerializeField]
     private bool testShock = false;
+
+    private bool canShock;
     #endregion
 
     #region Channels
@@ -41,6 +51,10 @@ public class HitBoxController : MonoBehaviour{
     private Animator animator;
     // private Kreation.Firmata.OnOffController ArduinoController;
     #endregion
+
+    private void Awake() {
+        SetSingleton();
+    }
 
     // Start is called before the first frame update
     void Start(){
@@ -70,11 +84,28 @@ public class HitBoxController : MonoBehaviour{
         }
     }
 
+    private void SetSingleton() {
+		if (_instance != null && _instance != this) {
+			Destroy(this.gameObject);
+		} else {
+			_instance = this;
+		}
+	}
+
     /// <summary>
     /// Triggers the collar
     /// </summary>
     public void Trigger(){
-        animator.SetTrigger(triggerAnim);
+        if(canShock){
+            canShock = false;
+            animator.SetTrigger(triggerAnim);
+            StartCoroutine(WaitForShock(timeBetweenShocks));
+        }
+    }
+
+    private IEnumerator WaitForShock(float time){
+        yield return new WaitForSeconds(time);
+        canShock = true;
     }
 
     /// <summary>

@@ -16,24 +16,40 @@ public class Enemy : MonoBehaviour{
     
     [SerializeField]
     private float rotationStrength = 1;
-    private GameObject target;
+    [SerializeField]
+    private float aimConeSize = 0.5f;
+    [HideInInspector]
+    public GameObject target;
+
+    #endregion
+
+    #region Movement
+
+    [SerializeField]
+    private float enemySpeed = 15;
+
+    [SerializeField]
+    private float idealDistance = 10;
 
     #endregion
 
     private Eyes eyes;
     private Rigidbody enemyRB;
+    private EnemyGun enemyGun;
 
     // Start is called before the first frame update
     void Start(){
         visionCollider = visionObject.GetComponent<Collider>();
         eyes = gameObject.GetComponent<Eyes>();
         enemyRB = gameObject.GetComponent<Rigidbody>();
+        enemyGun = gameObject.GetComponent<EnemyGun>();
     }
 
     // Update is called once per frame
     void Update(){
         if(target != null){
             RotateTowardsTarget();
+            MoveToPosition();
         }
     }
 
@@ -66,6 +82,8 @@ public class Enemy : MonoBehaviour{
 
     private void SetTarget(Collider target){
         this.target = target.gameObject;
+        // Set aim target (weird)
+        enemyGun.SetAimTarget(target.transform.Find("AimTargetPointer").GetComponent<AimTargetPointer>().GetAimTarget());
         // Tell eyes to look at target
         eyes.SetTarget(target.gameObject);
     }
@@ -86,19 +104,40 @@ public class Enemy : MonoBehaviour{
             else if(dirNum < 0){
                 enemyRB.AddRelativeTorque(dir * -rotationStrength, ForceMode.Force);
             }
+            
+            
+            if(dirNum > -aimConeSize && dirNum < aimConeSize){
+                if(enemyGun.canFire){
+                    enemyGun.Fire();
+                }
+            }
         }
     }
 
     private float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up) {
 		Vector3 perp = Vector3.Cross(fwd, targetDir);
 		float dir = Vector3.Dot(perp, up);
+
+        return dir;
 		
-		if (dir > 0f) {
-			return 1f;
-		} else if (dir < 0f) {
-			return -1f;
-		} else {
-			return 0f;
-		}
+		// if (dir > 0f) {
+		// 	return 1f;
+		// } else if (dir < 0f) {
+		// 	return -1f;
+		// } else {
+		// 	return 0f;
+		// }
 	}
+
+    private void MoveToPosition(){
+        if(Vector3.Distance(this.transform.position, target.transform.position) > idealDistance){
+            enemyRB.AddRelativeForce(Vector3.forward * enemySpeed, ForceMode.Force);
+        }
+        else if(Vector3.Distance(this.transform.position, target.transform.position) < idealDistance){
+            enemyRB.AddRelativeForce(Vector3.forward * -enemySpeed, ForceMode.Force);
+        }
+    }
 }
+
+
+// TODO Damage
