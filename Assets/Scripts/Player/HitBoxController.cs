@@ -29,7 +29,7 @@ public class HitBoxController : MonoBehaviour{
     [SerializeField]
     private bool testShock = false;
 
-    private bool canShock;
+    private bool canShock = true;
     #endregion
 
     #region Channels
@@ -59,6 +59,7 @@ public class HitBoxController : MonoBehaviour{
     // Start is called before the first frame update
     void Start(){
         animator = AurduinoControllerObj.GetComponent<Animator>();
+        canShock = true;
         //ArduinoController = AurduinoControllerObj.GetComponent<Kreation.Firmata.OnOffController>();
     }
 
