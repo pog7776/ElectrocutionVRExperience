@@ -42,7 +42,11 @@ public class HitBoxController : MonoBehaviour{
     #region Other Stuff
     [Header("Other Stuff")]
     [SerializeField]
+    private VRShooterKit.VR_Manager vR_Manager;
+
+    [SerializeField]
     private GameObject AurduinoControllerObj;
+    
     [SerializeField]
     private bool runTest = false;
     #endregion
@@ -52,6 +56,14 @@ public class HitBoxController : MonoBehaviour{
     // private Kreation.Firmata.OnOffController ArduinoController;
     #endregion
 
+
+    private VRShooterKit.VR_ControllerInfo rightControllerInfo;
+
+    private VRShooterKit.VR_Controller rightController = null;
+    private VRShooterKit.VR_Controller leftController = null;
+
+
+
     private void Awake() {
         SetSingleton();
     }
@@ -60,6 +72,17 @@ public class HitBoxController : MonoBehaviour{
     void Start(){
         animator = AurduinoControllerObj.GetComponent<Animator>();
         canShock = true;
+
+        rightController = VRShooterKit.VR_Manager.instance.RightController;
+        leftController = VRShooterKit.VR_Manager.instance.LeftController;
+
+        // ! Super important input from controller
+        // if (rightController.Input.GetButtonDown( VRShooterKit.VR_InputButton.Button_Secondary )){
+        //     // Do the thing
+        // }
+
+
+
         //ArduinoController = AurduinoControllerObj.GetComponent<Kreation.Firmata.OnOffController>();
     }
 
@@ -97,6 +120,15 @@ public class HitBoxController : MonoBehaviour{
     /// Triggers the collar
     /// </summary>
     public void Trigger(){
+
+        // Ensure you can't be shocked
+        if (rightController.Input.GetButtonDown( VRShooterKit.VR_InputButton.Button_Secondary ) || leftController.Input.GetButtonDown( VRShooterKit.VR_InputButton.Button_Secondary )){
+            canShock = false;
+        }
+        else{
+            canShock = true;
+        }
+
         if(canShock){
             canShock = false;
             animator.SetTrigger(triggerAnim);

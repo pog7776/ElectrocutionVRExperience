@@ -27,8 +27,8 @@ public class Bullet : MonoBehaviour{
         // Shrink bullet according to anim curve
         float time = 0;
         while(time < shrinkAnimation.length){
-            float size = 1 - shrinkAnimation.Evaluate(time);
-            transform.localScale.Set(size, size, size);
+            float size = shrinkAnimation.Evaluate(time);
+            transform.localScale = new Vector3(size, size, size);
             time += shrinkResolution;
             yield return new WaitForSeconds(shrinkResolution);
         }

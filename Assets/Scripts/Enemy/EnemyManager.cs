@@ -2,17 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class EnemyManager : Platinio.Singleton<EnemyManager>{
+
+    [SerializeField]
+    private int maxEnemies = 10;
+
+    private List<GameObject> enemyList;
+    private List<ShockEnemySpawner> enemySpawners;
+
+    //Start is called before the first frame update
+    void Start(){
+        enemyList = new List<GameObject>();
+        enemySpawners = new List<ShockEnemySpawner>();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update(){
+
+        if(enemyList.Count >= maxEnemies){
+            foreach(ShockEnemySpawner spawner in enemySpawners){
+                spawner.SetCanSpawn(false);
+            }
+        }
+        else{
+            foreach(ShockEnemySpawner spawner in enemySpawners){
+                StartCoroutine(spawner.SpawnTimer(spawner.GetSpawnRate()));
+            }
+        }
+
+    }
+
+    public void AddToEnemyList(GameObject enemy){
+        enemyList.Add(enemy);
+    }
+
+    public void RemoveFromEnemyList(GameObject enemy){
+        if(enemyList.Contains(enemy)){
+            enemyList.Remove(enemy);
+        }
+    }
+
+
+    public void AddToSpawnerList(ShockEnemySpawner spawner){
+        enemySpawners.Add(spawner);
+    }
+
+    public void RemoveFromSpawnerList(ShockEnemySpawner spawner){
+        if(enemySpawners.Contains(spawner)){
+            enemySpawners.Remove(spawner);
+        }
     }
 }

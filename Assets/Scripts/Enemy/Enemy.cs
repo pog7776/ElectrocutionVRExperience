@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour{
 
     #region Vision
+    [Header("Vision")]
 
     [SerializeField]
     private GameObject visionObject;
@@ -13,6 +15,7 @@ public class Enemy : MonoBehaviour{
     #endregion
 
     #region Targeting
+    [Header("Targeting")]
     
     [SerializeField]
     private float rotationStrength = 1;
@@ -24,6 +27,7 @@ public class Enemy : MonoBehaviour{
     #endregion
 
     #region Movement
+    [Header("Movement")]
 
     [SerializeField]
     private float enemySpeed = 15;
@@ -33,16 +37,39 @@ public class Enemy : MonoBehaviour{
 
     #endregion
 
+    #region Health
+    [Header("Health")]
+
+    [SerializeField]
+    private float health = 100f;
+
+    [SerializeField]
+    public float defaultDamageTaken = 10f;
+
+    [SerializeField]
+    private AnimationCurve deathAnimation;
+    [SerializeField]
+    private ParticleSystem damageEffect;
+
+    [SerializeField]
+    private bool triggerDeath = false;
+
+    #endregion
+
     private Eyes eyes;
     private Rigidbody enemyRB;
     private EnemyGun enemyGun;
 
     // Start is called before the first frame update
     void Start(){
+
+        EnemyManager.instance.AddToEnemyList(gameObject);
+
         visionCollider = visionObject.GetComponent<Collider>();
         eyes = gameObject.GetComponent<Eyes>();
         enemyRB = gameObject.GetComponent<Rigidbody>();
         enemyGun = gameObject.GetComponent<EnemyGun>();
+        //navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -50,6 +77,20 @@ public class Enemy : MonoBehaviour{
         if(target != null){
             RotateTowardsTarget();
             MoveToPosition();
+        }
+
+        // if(target == null){
+        //     navMeshAgent.enabled = true;
+        //     WalkAimlessly();
+        // }
+
+        if(health <= 0){
+            StartCoroutine(Die());
+        }
+
+        if(triggerDeath){
+            StartCoroutine(Die());
+            triggerDeath = false;
         }
     }
 
@@ -67,6 +108,15 @@ public class Enemy : MonoBehaviour{
         if(other.tag == "Player"){
             SetTarget(other);
         }
+
+        // if(other.gameObject.tag == "PlayerProjectile"){
+        //     DoDamage(defaultDamageTaken);
+        //     Destroy(other.gameObject);
+        // }
+
+        // if(other.gameObject.tag == "PlayerMelee"){
+        //     DoDamage(300f);
+        // }
     }
 
     /// <summary>
@@ -78,6 +128,35 @@ public class Enemy : MonoBehaviour{
             SetTarget(null);
             eyes.SetTarget(null);
         }
+    }
+
+    public void DoDamage(float damage){
+        health -= damage;
+        damageEffect.Play();
+    }
+
+    private IEnumerator Die(){
+        EnemyManager.instance.RemoveFromEnemyList(gameObject);
+        
+        float time = 0;
+        while(time < deathAnimation.length){
+            float size = deathAnimation.Evaluate(time);
+            transform.localScale = new Vector3(size, size, size);
+
+            if(size == 0){
+                Destroy(gameObject);
+            }
+
+            time += 0.01f;
+            yield return new WaitForSeconds(0.01f);
+        }
+        if(gameObject != null){
+            Destroy(gameObject);
+        }
+    }
+
+    public float GetHealth(){
+        return health;
     }
 
     private void SetTarget(Collider target){
@@ -136,6 +215,14 @@ public class Enemy : MonoBehaviour{
         else if(Vector3.Distance(this.transform.position, target.transform.position) < idealDistance){
             enemyRB.AddRelativeForce(Vector3.forward * -enemySpeed, ForceMode.Force);
         }
+    }
+
+    private void WalkAimlessly(){
+        // Vector3 randomDirection = Random.insideUnitSphere * walkRadius;
+        // randomDirection += transform.position;
+        // NavMeshHit hit;
+        // NavMesh.SamplePosition(randomDirection, out hit, walkRadius, 1);
+        // Vector3 finalPosition = hit.position;
     }
 }
 

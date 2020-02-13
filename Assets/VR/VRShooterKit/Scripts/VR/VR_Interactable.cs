@@ -193,7 +193,7 @@ namespace VRShooterKit
             
         }
 
-        private void ProcessControllerInfoInteraction(VR_ControllerInfo info)
+        public void ProcessControllerInfoInteraction(VR_ControllerInfo info)
         {
             VR_HandInteractSettings settings = info.controller.ControllerType == VR_ControllerType.Right ? rightHandSettings : leftHandSettings;
             Transform highlightPoint = info.controller.ControllerType == VR_ControllerType.Right ? HighlightPointRightHand : HighlightPointLeftHand;

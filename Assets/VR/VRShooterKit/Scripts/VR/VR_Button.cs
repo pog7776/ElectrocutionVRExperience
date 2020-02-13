@@ -126,8 +126,10 @@ namespace VRShooterKit
 
         //something is pressing this button
         private void OnTriggerEnter(Collider other)
-        {           
-            Click(other);
+        {
+            if(other.gameObject.tag != "Vision"){
+                Click(other);
+            }
         }
 
         //this button have a obstacle like the hand presisng it?
@@ -149,14 +151,18 @@ namespace VRShooterKit
 
         private void OnTriggerStay(Collider other)
         {
-            if(currentState == ButtonState.Ready)
-                Click(other);
+            if(other.gameObject.tag != "Vision"){
+                if(currentState == ButtonState.Ready)
+                    Click(other);
+            }
         }
 
 
         private void OnTriggerExit(Collider other)
-        {           
-            Release();
+        {       
+            if(other.gameObject.tag != "Vision"){    
+                Release();
+            }
         }
 
         public override void DoDamage(DamageInfo info)

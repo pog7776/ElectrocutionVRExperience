@@ -3,10 +3,10 @@ using System.Collections;
 
 namespace VRShooterKit.WeaponSystem
 {
-    public class Bullet : Projectile
-    {
+    public class Bullet : Projectile{
         [SerializeField] private TrailRenderer trailRender = null;
         [SerializeField] private Gradient invisibleGrandient;
+        [SerializeField] private float damage = 10;
 
         private float distanceTraveled = 0.0f;
         private bool shouldHit = false;
@@ -98,18 +98,20 @@ namespace VRShooterKit.WeaponSystem
 
         private void BounceOnSurface(RaycastHit hit , SurfaceDetails surface = null)
         {
-            bounceCount++;
-            //reflect the bullet on the surface
-            Vector3 newDir = Vector3.Reflect( transform.forward, hit.normal );
-            transform.forward = newDir;
-            shootInfo.dir = newDir;
+            if(surface.gameObject.tag != "Vision"){
+                bounceCount++;
+                //reflect the bullet on the surface
+                Vector3 newDir = Vector3.Reflect( transform.forward, hit.normal );
+                transform.forward = newDir;
+                shootInfo.dir = newDir;
 
-            float speedLose = 0.20f;
+                float speedLose = 0.20f;
 
-            if (surface != null)
-                speedLose = surface.BulletsSpeedLoseOnBounce;
+                if (surface != null)
+                    speedLose = surface.BulletsSpeedLoseOnBounce;
 
-            shootInfo.speed -= speedLose * shootInfo.speed;
+                shootInfo.speed -= speedLose * shootInfo.speed;
+            }
         }
 
         private int RandomSign()
@@ -155,6 +157,16 @@ namespace VRShooterKit.WeaponSystem
             launched = true;
         }
 
+        private void OnTriggerEnter(Collider other) {
+            if(other.gameObject.tag == "Enemy"){
+                other.GetComponent<Enemy>().DoDamage(damage);
+                Destroy(gameObject);
+            }
+
+            // if(other.gameObject.tag == "Vision"){
+            //     Physics.IgnoreCollision(other, GetComponent<Collider>());
+            // }
+        }
 
     }
 

@@ -8,6 +8,9 @@ TagManager:
   - projectile
   - FxTemporaire
   - AimTarget
+  - PlayerProjectile
+  - PlayerMelee
+  - Vision
   layers:
   - Default
   - TransparentFX
