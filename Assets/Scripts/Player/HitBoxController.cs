@@ -41,8 +41,6 @@ public class HitBoxController : MonoBehaviour{
 
     #region Other Stuff
     [Header("Other Stuff")]
-    [SerializeField]
-    private VRShooterKit.VR_Manager vR_Manager;
 
     [SerializeField]
     private GameObject AurduinoControllerObj;

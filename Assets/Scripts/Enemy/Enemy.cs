@@ -161,8 +161,11 @@ public class Enemy : MonoBehaviour{
 
     private void SetTarget(Collider target){
         this.target = target.gameObject;
+        
         // Set aim target (weird)
-        enemyGun.SetAimTarget(target.transform.Find("AimTargetPointer").GetComponent<AimTargetPointer>().GetAimTarget());
+        //enemyGun.SetAimTarget(target.transform.Find("AimTargetPointer").GetComponent<AimTargetPointer>().GetAimTarget());
+        enemyGun.SetAimTarget(eyes.restingPos);
+
         // Tell eyes to look at target
         eyes.SetTarget(target.gameObject);
     }

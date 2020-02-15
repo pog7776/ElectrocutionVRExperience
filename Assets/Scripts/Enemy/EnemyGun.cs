@@ -69,7 +69,10 @@ public class EnemyGun : MonoBehaviour{
         if(enemy.target != null){
             //bulletRB.AddForce(new Vector3(0, Vector3.Distance(bulletRB.transform.position, enemy.target.transform.position) / 100, 1) * bulletSpeed, ForceMode.VelocityChange);
             float distance = Vector3.Distance(bulletRB.transform.position, enemy.target.transform.position);
-            bulletRB.AddForce((aimTarget.transform.position - bulletRB.transform.position) * bulletVelocity.Evaluate(distance), ForceMode.VelocityChange);
+
+            Vector3 targetLoc = new Vector3(aimTarget.transform.position.x + 0.2f, aimTarget.transform.position.y, aimTarget.transform.position.z);
+
+            bulletRB.AddForce((targetLoc - bulletRB.transform.position) * bulletVelocity.Evaluate(distance), ForceMode.VelocityChange);
         }
         else{
             bulletRB.AddForce(new Vector3(0, 0.15f, 1) * bulletSpeed, ForceMode.VelocityChange);

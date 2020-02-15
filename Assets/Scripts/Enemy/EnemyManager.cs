@@ -10,10 +10,16 @@ public class EnemyManager : Platinio.Singleton<EnemyManager>{
     private List<GameObject> enemyList;
     private List<ShockEnemySpawner> enemySpawners;
 
-    //Start is called before the first frame update
-    void Start(){
+
+    protected override void Awake(){
         enemyList = new List<GameObject>();
         enemySpawners = new List<ShockEnemySpawner>();
+        
+        base.Awake();  // make sure base init stuff gets done
+    }
+
+    protected override void Start(){
+        base.Start();  // make sure base init stuff gets done
     }
 
     // Update is called once per frame
@@ -26,7 +32,8 @@ public class EnemyManager : Platinio.Singleton<EnemyManager>{
         }
         else{
             foreach(ShockEnemySpawner spawner in enemySpawners){
-                StartCoroutine(spawner.SpawnTimer(spawner.GetSpawnRate()));
+                //StartCoroutine(spawner.SpawnTimer(spawner.GetSpawnRate()));
+                spawner.SetCanSpawn(true);
             }
         }
 
